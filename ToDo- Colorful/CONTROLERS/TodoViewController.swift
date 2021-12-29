@@ -12,7 +12,7 @@ class TodoViewController: UIViewController {
     //MARK: - OUTLETS
     @IBOutlet weak var tableView: UITableView!
     
-    let itemArray = ["TESTE 1", "TESTE 2", "TESTE 3"]
+    var itemArray = ["TESTE 1", "TESTE 2", "TESTE 3"]
     
     
     //MARK: - VIEWDIDLOAD
@@ -22,7 +22,9 @@ class TodoViewController: UIViewController {
         tableView.register(UINib(nibName: K.nibName, bundle: nil), forCellReuseIdentifier: K.cellIdentifier1)
         
         //Delegates -----------------------
-                tableView.delegate = self
+        tableView.delegate = self
+        tableView.dataSource = self
+        
         //---------------------------------
         
         //NC SETUP
@@ -42,13 +44,14 @@ extension TodoViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return itemArray.count
     }
-
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: K.cellIdentifier1, for: indexPath) as! TodoTableViewCell
-        cell.label.text = itemArray[indexPath.row]
+        
+        cell.cellText.text = itemArray[indexPath.row]
         
         return cell
     }
-
-
+    
+    
 }

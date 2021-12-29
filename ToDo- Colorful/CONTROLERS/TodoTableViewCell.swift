@@ -9,11 +9,13 @@ import UIKit
 
 class TodoTableViewCell: UITableViewCell {
 
-    @IBOutlet var label: UILabel!
+    
+    @IBOutlet weak var cellText: UILabel!
+    
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        label.text = "TESTE"
+        
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {

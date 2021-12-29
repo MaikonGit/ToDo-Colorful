@@ -2,39 +2,53 @@
 //  TodoViewController.swift
 //  ToDo- Colorful
 //
-//  Created by Maikon Ferreira on 24/12/21.
+//  Created by Maikon Ferreira on 25/12/21.
 //
 
 import UIKit
 
-class TodoViewController: UITableViewController {
-        
+class TodoViewController: UIViewController {
+    
+    //MARK: - OUTLETS
+    @IBOutlet weak var tableView: UITableView!
+    
+    let itemArray = ["TESTE 1", "TESTE 2", "TESTE 3"]
+    
+    
+    //MARK: - VIEWDIDLOAD
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        view.backgroundColor = .red
         
-        self.tableView.register(UINib(nibName: K.cellIdentifier1, bundle: nil), forCellReuseIdentifier: K.cellIdentifier1)
+        tableView.register(UINib(nibName: K.nibName, bundle: nil), forCellReuseIdentifier: K.cellIdentifier1)
         
-    }
-
-    // MARK: - Table view data source
-
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 0
-    }
-
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return 0
+        //Delegates -----------------------
+                tableView.delegate = self
+        //---------------------------------
+        
+        //NC SETUP
+        title = "ToDo"
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.navigationBar.backgroundColor = .systemBlue
+        
+        
     }
     
     
 }
 
-extension TodoViewController {
-    
-    
-    
+
+//MARK: - TABLEVIEW DELEGATE
+extension TodoViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return itemArray.count
+    }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: K.cellIdentifier1, for: indexPath) as! TodoTableViewCell
+        cell.label.text = itemArray[indexPath.row]
+        
+        return cell
+    }
+
+
 }

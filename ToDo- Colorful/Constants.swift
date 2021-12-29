@@ -10,4 +10,5 @@ import Foundation
 struct K {
     //Cell Identifiers
     static let cellIdentifier1 = "TodoItemCell"
+    static let nibName = "TodoTableViewCell"
 }

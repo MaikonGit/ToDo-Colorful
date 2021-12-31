@@ -6,18 +6,17 @@
 //
 
 import UIKit
-import ObjectiveC
-
+import CoreData
 
 class TodoViewController: UIViewController {
     
     //MARK: - OUTLETS
     @IBOutlet weak var tableView: UITableView!
     
-    //UserDefault
-    let defaults = UserDefaults.standard
-    
-    var itemArray = ["TESTE 1", "TESTE 2", "TESTE 3"]
+    //MARK: - SHARED CONSTANTS
+    let todoBrain = TodoBrain()
+    //Access Database
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     
     //MARK: - VIEWDIDLOAD
@@ -30,20 +29,16 @@ class TodoViewController: UIViewController {
         //register cell to tableView
         tableView.register(UINib(nibName: K.nibName, bundle: nil), forCellReuseIdentifier: K.cellIdentifier1)
         
-        //Delegates -----------------------
+        //Delegates
         tableView.delegate = self
         tableView.dataSource = self
         
-        //---------------------------------
-        
-        //atualizando Array com UserDefault
-        if let items = defaults.array(forKey: "ToDo List") as? [String] {
-            itemArray = items
-        }
-        
+        //load data
+        todoBrain.loadData()
     }
     
     //MARK: - CONFIGURACAO NC
+    
     func configureNC() {
         title = "ToDo"
         navigationController?.navigationBar.prefersLargeTitles = true
@@ -63,25 +58,34 @@ class TodoViewController: UIViewController {
     @objc func addPressed() {
         //variavel textfield transportada p socope da funcao configurada p/ ser = alertTextfield
         var textField = UITextField()
-        
+        //creating alert
         let alert = UIAlertController(title: "Add New ToDo Item", message: "", preferredStyle: .alert)
-        
+        //alert ADD ITEM buttom
         let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
-            self.itemArray.append(textField.text ?? "")
-            //save array with userDefaults
-            self.defaults.set(self.itemArray, forKey: "ToDo List")
+            
+            //appending new item
+            let newItem = Item(context: self.context)
+            newItem.title = textField.text!
+            newItem.done = false
+            self.todoBrain.itemArray.append(newItem)
+            
+            //saving data
+            self.todoBrain.saveData()
+            //reload tableView
             self.tableView.reloadData()
             
         }
+        //add textField inside alert box
         alert.addTextField { (alertTextField) in
             alertTextField.placeholder = "Create a new item"
+            //setting alert textField as textField in scope
             textField = alertTextField
         }
-        
+        //presenting alert box
         alert.addAction(action)
         present(alert, animated: true, completion: nil)
     }
-    
+  
 }//class
 
 
@@ -90,13 +94,18 @@ class TodoViewController: UIViewController {
 //MARK: - TABLEVIEW DELEGATE
 extension TodoViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return itemArray.count
+        return todoBrain.itemArray.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: K.cellIdentifier1, for: indexPath) as! TodoTableViewCell
+        let item = todoBrain.itemArray[indexPath.row]
+        cell.cellText.text = item.title
         
-        cell.cellText.text = itemArray[indexPath.row]
+        //ternary operator - liga o bool da class Item ao checkmark
+        cell.accessoryType = item.done == true ? .checkmark : .none
+        
+        
         
         return cell
     }
@@ -105,11 +114,17 @@ extension TodoViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         //deselect cell
         tableView.deselectRow(at: indexPath, animated: true)
+        let item = todoBrain.itemArray[indexPath.row]
+        //checkmark statement (refatorado) liga e desliga do chackmark
+        item.done = !item.done
         
-        //checkmark statement
-        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .none
-        } else { tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark}
+        todoBrain.saveData()
+        self.tableView.reloadData()
+        
+        //checkmark antigo
+        //        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
+        //            tableView.cellForRow(at: indexPath)?.accessoryType = .none
+        //        } else { tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark}
         
     }
     

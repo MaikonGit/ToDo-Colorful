@@ -76,6 +76,7 @@
 		8417BF99277E6DF300B8EB36 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				8415CFDB2776553D008523A7 /* Constants.swift */,
 				8467C7FE27757BEC002985DD /* Assets.xcassets */,
 				8467C80027757BEC002985DD /* LaunchScreen.storyboard */,
 			);
@@ -111,7 +112,6 @@
 			children = (
 				8467C7F527757BEA002985DD /* AppDelegate.swift */,
 				8467C7F727757BEA002985DD /* SceneDelegate.swift */,
-				8415CFDB2776553D008523A7 /* Constants.swift */,
 				8417BF98277E6DC100B8EB36 /* Data Model */,
 				8415CFD9277654C7008523A7 /* VIEWS */,
 				8417BF9C277EAB5900B8EB36 /* MODEL */,

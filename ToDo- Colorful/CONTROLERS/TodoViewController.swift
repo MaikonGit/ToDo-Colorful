@@ -12,6 +12,7 @@ class TodoViewController: UIViewController {
     
     //MARK: - OUTLETS
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var searchBar: UISearchBar!
     
     //MARK: - SHARED CONSTANTS
     let todoBrain = TodoBrain()
@@ -25,6 +26,11 @@ class TodoViewController: UIViewController {
         
         //NC call
         configureNC()
+        
+        //searchBar textField setup
+        let textFieldSearchBar = searchBar.value(forKey: "searchField") as? UITextField
+        textFieldSearchBar?.textColor = .label
+        textFieldSearchBar?.backgroundColor = .white
         
         //register cell to tableView
         tableView.register(UINib(nibName: K.nibName, bundle: nil), forCellReuseIdentifier: K.cellIdentifier1)
@@ -86,12 +92,14 @@ class TodoViewController: UIViewController {
         present(alert, animated: true, completion: nil)
     }
   
+    
+    
 }//class
 
 
 
 
-//MARK: - TABLEVIEW DELEGATE
+//MARK: - TABLEVIEW DELEGATE - EXTENSION
 extension TodoViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return todoBrain.itemArray.count
@@ -110,6 +118,23 @@ extension TodoViewController: UITableViewDelegate, UITableViewDataSource {
         return cell
     }
     
+    
+    //MARK: - SWIPE TO DELETE FUNC
+    private func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+        return true
+    }
+
+    internal func tableView(_ tableView: UITableView, commit editingStyle: TodoTableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        
+        if (editingStyle == TodoTableViewCell.EditingStyle.delete) {
+            context.delete(todoBrain.itemArray[indexPath.row])
+            todoBrain.itemArray.remove(at: indexPath.row)
+            todoBrain.saveData()
+            tableView.reloadData()
+        }
+    }
+   
+    
     //MARK: - DID SELECT ROW AT:
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         //deselect cell
@@ -127,5 +152,33 @@ extension TodoViewController: UITableViewDelegate, UITableViewDataSource {
         //        } else { tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark}
         
     }
+}//extension tableView delegate
+
+//MARK: - SEARCH BAR DELEGATE - EXTENSION
+extension TodoViewController: UISearchBarDelegate {
+   
+    //search buttom
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        let request: NSFetchRequest<Item> = Item.fetchRequest()
     
-}
+        request.predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+        todoBrain.loadData(with: request)
+        
+        self.tableView.reloadData()
+    }
+    
+    //searchBar text alteracao depois da busca
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchBar.text?.count == 0 {
+            todoBrain.loadData()
+            
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()
+            }
+        }
+    }
+    
+    
+    
+}//extension searchbar delegate

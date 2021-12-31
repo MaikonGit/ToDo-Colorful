@@ -10,6 +10,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="TodoViewController" customModule="ToDo__Colorful" customModuleProvider="target">
             <connections>
+                <outlet property="searchBar" destination="CfQ-Jx-3kc" id="9xB-bj-8Um"/>
                 <outlet property="tableView" destination="Jz7-yA-s3v" id="Eyi-Pa-bjm"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
@@ -19,9 +20,18 @@
             <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="Jz7-yA-s3v">
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="Jz7-yA-s3v">
                     <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                    <color key="backgroundColor" systemColor="systemGray2Color"/>
+                    <color key="backgroundColor" systemColor="systemBlueColor"/>
+                    <searchBar key="tableHeaderView" contentMode="redraw" placeholder="Search" id="CfQ-Jx-3kc">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                        <color key="barTintColor" systemColor="systemBlueColor"/>
+                        <textInputTraits key="textInputTraits" enablesReturnKeyAutomatically="YES"/>
+                        <connections>
+                            <outlet property="delegate" destination="-1" id="fZy-Yj-VfY"/>
+                        </connections>
+                    </searchBar>
                 </tableView>
             </subviews>
             <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
@@ -29,7 +39,7 @@
             <constraints>
                 <constraint firstAttribute="trailing" secondItem="Jz7-yA-s3v" secondAttribute="trailing" id="0ea-uu-lem"/>
                 <constraint firstItem="Jz7-yA-s3v" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="HpQ-pa-o97"/>
-                <constraint firstItem="Jz7-yA-s3v" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="eAu-Bj-xSu"/>
+                <constraint firstItem="Jz7-yA-s3v" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="iQI-F7-v5r"/>
                 <constraint firstAttribute="bottom" secondItem="Jz7-yA-s3v" secondAttribute="bottom" id="ydS-0r-a4Z"/>
             </constraints>
             <point key="canvasLocation" x="137.68115942028987" y="95.758928571428569"/>
@@ -39,8 +49,8 @@
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
-        <systemColor name="systemGray2Color">
-            <color red="0.68235294117647061" green="0.68235294117647061" blue="0.69803921568627447" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        <systemColor name="systemBlueColor">
+            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

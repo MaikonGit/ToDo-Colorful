@@ -29,8 +29,8 @@ class TodoBrain {
     }
     
     //MARK: - LOAD DATA FUNC
-    func loadData() {
-        let request: NSFetchRequest<Item> = Item.fetchRequest()
+    func loadData(with request: NSFetchRequest<Item> = Item.fetchRequest()) {
+        
         do {
           itemArray = try context.fetch(request)
         } catch {

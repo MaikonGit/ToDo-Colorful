@@ -16,8 +16,8 @@
                 <rect key="frame" x="0.0" y="0.0" width="335" height="78"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3xE-Fs-msb">
-                        <rect key="frame" x="146.5" y="28.5" width="42" height="21"/>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3xE-Fs-msb">
+                        <rect key="frame" x="0.0" y="0.0" width="335" height="78"/>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
@@ -25,7 +25,11 @@
                 </subviews>
                 <constraints>
                     <constraint firstItem="3xE-Fs-msb" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="0JG-xL-Vzj"/>
+                    <constraint firstAttribute="bottom" secondItem="3xE-Fs-msb" secondAttribute="bottom" id="P5t-Ni-EmH"/>
+                    <constraint firstAttribute="trailing" secondItem="3xE-Fs-msb" secondAttribute="trailing" id="U92-h7-2ki"/>
+                    <constraint firstItem="3xE-Fs-msb" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="XJL-Ka-Vu1"/>
                     <constraint firstItem="3xE-Fs-msb" firstAttribute="centerX" secondItem="H2p-sc-9uM" secondAttribute="centerX" id="yD3-iR-MNm"/>
+                    <constraint firstItem="3xE-Fs-msb" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="zoa-dt-E4Z"/>
                 </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>

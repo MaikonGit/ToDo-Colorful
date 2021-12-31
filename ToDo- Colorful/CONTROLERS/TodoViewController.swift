@@ -172,9 +172,10 @@ extension TodoViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchBar.text?.count == 0 {
             todoBrain.loadData()
+            self.tableView.reloadData()
             
             DispatchQueue.main.async {
-                searchBar.resignFirstResponder()
+                self.searchBar.resignFirstResponder()
             }
         }
     }

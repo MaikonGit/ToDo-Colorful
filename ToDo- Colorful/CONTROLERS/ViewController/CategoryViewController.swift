@@ -1,26 +1,27 @@
 //
-//  TodoViewController.swift
+//  CategoryViewController.swift
 //  ToDo- Colorful
 //
-//  Created by Maikon Ferreira on 25/12/21.
+//  Created by Maikon Ferreira on 31/12/21.
 //
 
 import UIKit
 import CoreData
 
-class TodoViewController: UIViewController {
+class CategoryViewController: UIViewController {
     
     //MARK: - OUTLETS
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
     
     //MARK: - SHARED CONSTANTS
+    let categoryBrain = CategoryBrain()
+    let todoViewController = TodoViewController()
     let todoBrain = TodoBrain()
-    //Access Database
+    //Acces to Database
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
-    
-    //MARK: - VIEWDIDLOAD
+    //MARK: - VIEW DID LOAD
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -33,57 +34,57 @@ class TodoViewController: UIViewController {
         textFieldSearchBar?.backgroundColor = .white
         
         //register cell to tableView
-        tableView.register(UINib(nibName: K.nibName, bundle: nil), forCellReuseIdentifier: K.cellIdentifier1)
+        tableView.register(UINib(nibName: K.nibName2, bundle: nil), forCellReuseIdentifier: K.cellIdentifier2)
         
         //Delegates
         tableView.delegate = self
         tableView.dataSource = self
         
         //load data
-        todoBrain.loadData()
+        categoryBrain.loadData()
+        
     }
     
-    //MARK: - CONFIGURACAO NC
     
+    //MARK: - CONFIGURACAO NC
     func configureNC() {
-        title = "ToDo"
+        title = "ToDo List"
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationController?.navigationBar.tintColor = .label
         settingRightBarButtom()
-        //ITENS:
+        //ITEMS:
         
         //RightButtom
         func settingRightBarButtom() {
             let rightBarButtom: () = navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addPressed))
             
-            return rightBarButtom }
+            return rightBarButtom
+        }
     }
     
-    //MARK: - ADD NEW ITENS BUTTOM
-    
+    //MARK: - ADD NEW CATEGORY BUTTOM
     @objc func addPressed() {
         //variavel textfield transportada p socope da funcao configurada p/ ser = alertTextfield
         var textField = UITextField()
         //creating alert
-        let alert = UIAlertController(title: "Add New ToDo Item", message: "", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Add New category", message: "", preferredStyle: .alert)
         //alert ADD ITEM buttom
-        let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
+        let action = UIAlertAction(title: "Add Category", style: .default) { (action) in
             
             //appending new item
-            let newItem = Item(context: self.context)
-            newItem.title = textField.text!
-            newItem.done = false
-            self.todoBrain.itemArray.append(newItem)
+            let newCategory = Category(context: self.context)
+            newCategory.name = textField.text!
+            self.categoryBrain.categoryArray.append(newCategory)
             
             //saving data
-            self.todoBrain.saveData()
+            self.categoryBrain.saveData()
             //reload tableView
             self.tableView.reloadData()
             
         }
         //add textField inside alert box
         alert.addTextField { (alertTextField) in
-            alertTextField.placeholder = "Create a new item"
+            alertTextField.placeholder = "Create a new Category"
             //setting alert textField as textField in scope
             textField = alertTextField
         }
@@ -91,79 +92,63 @@ class TodoViewController: UIViewController {
         alert.addAction(action)
         present(alert, animated: true, completion: nil)
     }
-  
-    
     
 }//class
 
-
-
-
-//MARK: - TABLEVIEW DELEGATE - EXTENSION
-extension TodoViewController: UITableViewDelegate, UITableViewDataSource {
+//MARK: - TABLE VIEW DELEGATE - EXTENSION
+extension CategoryViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return todoBrain.itemArray.count
+        return categoryBrain.categoryArray.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: K.cellIdentifier1, for: indexPath) as! TodoTableViewCell
-        let item = todoBrain.itemArray[indexPath.row]
-        cell.cellText.text = item.title
-        
-        //ternary operator - liga o bool da class Item ao checkmark
-        cell.accessoryType = item.done == true ? .checkmark : .none
-        
-        
+        let cell = tableView.dequeueReusableCell(withIdentifier: K.cellIdentifier2, for: indexPath) as! CategoryTableViewCell
+        let category = categoryBrain.categoryArray[indexPath.row]
+        cell.cellText.text = category.name
         
         return cell
     }
-    
     
     //MARK: - SWIPE TO DELETE FUNC
     private func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
         return true
     }
-
-    internal func tableView(_ tableView: UITableView, commit editingStyle: TodoTableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+    
+    internal func tableView(_ tableView: UITableView, commit editingStyle: CategoryTableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         
-        if (editingStyle == TodoTableViewCell.EditingStyle.delete) {
-            context.delete(todoBrain.itemArray[indexPath.row])
-            todoBrain.itemArray.remove(at: indexPath.row)
-            todoBrain.saveData()
+        if (editingStyle == CategoryTableViewCell.EditingStyle.delete) {
+            context.delete(categoryBrain.categoryArray[indexPath.row])
+            categoryBrain.categoryArray.remove(at: indexPath.row)
+            categoryBrain.saveData()
             tableView.reloadData()
         }
     }
-   
     
     //MARK: - DID SELECT ROW AT:
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        //deselect cell
-        tableView.deselectRow(at: indexPath, animated: true)
-        let item = todoBrain.itemArray[indexPath.row]
-        //checkmark statement (refatorado) liga e desliga do chackmark
-        item.done = !item.done
+        navigationController?.pushViewController(todoViewController, animated: true)
         
-        todoBrain.saveData()
-        self.tableView.reloadData()
+        if let indexPath = tableView.indexPathForSelectedRow {
+            todoViewController.selectCategory = categoryBrain.categoryArray[indexPath.row]
+           
+        }
         
-        //checkmark antigo
-        //        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
-        //            tableView.cellForRow(at: indexPath)?.accessoryType = .none
-        //        } else { tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark}
-        
+      
     }
-}//extension tableView delegate
+    
+    
+}//tableView extension
 
 //MARK: - SEARCH BAR DELEGATE - EXTENSION
-extension TodoViewController: UISearchBarDelegate {
-   
+extension CategoryViewController: UISearchBarDelegate {
+    
     //search buttom
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        let request: NSFetchRequest<Item> = Item.fetchRequest()
-    
-        request.predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
-        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
-        todoBrain.loadData(with: request)
+        let request: NSFetchRequest<Category> = Category.fetchRequest()
+        
+        request.predicate = NSPredicate(format: "name CONTAINS[cd] %@", searchBar.text!)
+        request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
+        categoryBrain.loadData(with: request)
         
         self.tableView.reloadData()
     }
@@ -171,7 +156,7 @@ extension TodoViewController: UISearchBarDelegate {
     //searchBar text alteracao depois da busca
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchBar.text?.count == 0 {
-            todoBrain.loadData()
+            categoryBrain.loadData()
             self.tableView.reloadData()
             
             DispatchQueue.main.async {

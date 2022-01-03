@@ -14,6 +14,11 @@
 		8415CFE02776E30C008523A7 /* TodoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8415CFDE2776E30C008523A7 /* TodoViewController.xib */; };
 		8417BF9B277E99B700B8EB36 /* ToDo Brain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8417BF9A277E99B700B8EB36 /* ToDo Brain.swift */; };
 		8417BF9F277EAB9D00B8EB36 /* TodoDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 8417BF9D277EAB9D00B8EB36 /* TodoDataModel.xcdatamodeld */; };
+		8417BFCA277F650300B8EB36 /* CategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8417BFC8277F650300B8EB36 /* CategoryViewController.swift */; };
+		8417BFCB277F650300B8EB36 /* CategoryViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8417BFC9277F650300B8EB36 /* CategoryViewController.xib */; };
+		8417BFCE277F654E00B8EB36 /* CategoryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8417BFCC277F654E00B8EB36 /* CategoryTableViewCell.swift */; };
+		8417BFCF277F654E00B8EB36 /* CategoryTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8417BFCD277F654E00B8EB36 /* CategoryTableViewCell.xib */; };
+		8417BFD5277F701F00B8EB36 /* Category Brain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8417BFD4277F701F00B8EB36 /* Category Brain.swift */; };
 		8467C7F627757BEA002985DD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8467C7F527757BEA002985DD /* AppDelegate.swift */; };
 		8467C7F827757BEA002985DD /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8467C7F727757BEA002985DD /* SceneDelegate.swift */; };
 		8467C7FF27757BEC002985DD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8467C7FE27757BEC002985DD /* Assets.xcassets */; };
@@ -28,6 +33,11 @@
 		8415CFDE2776E30C008523A7 /* TodoViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TodoViewController.xib; sourceTree = "<group>"; };
 		8417BF9A277E99B700B8EB36 /* ToDo Brain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ToDo Brain.swift"; sourceTree = "<group>"; };
 		8417BF9E277EAB9D00B8EB36 /* Todo Data Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Todo Data Model.xcdatamodel"; sourceTree = "<group>"; };
+		8417BFC8277F650300B8EB36 /* CategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryViewController.swift; sourceTree = "<group>"; };
+		8417BFC9277F650300B8EB36 /* CategoryViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CategoryViewController.xib; sourceTree = "<group>"; };
+		8417BFCC277F654E00B8EB36 /* CategoryTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryTableViewCell.swift; sourceTree = "<group>"; };
+		8417BFCD277F654E00B8EB36 /* CategoryTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CategoryTableViewCell.xib; sourceTree = "<group>"; };
+		8417BFD4277F701F00B8EB36 /* Category Brain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Category Brain.swift"; sourceTree = "<group>"; };
 		8467C7F227757BEA002985DD /* ToDo- Colorful.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ToDo- Colorful.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8467C7F527757BEA002985DD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8467C7F727757BEA002985DD /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -50,8 +60,8 @@
 		8415CFD9277654C7008523A7 /* VIEWS */ = {
 			isa = PBXGroup;
 			children = (
-				8415CFD6277654B9008523A7 /* TodoTableViewCell.xib */,
-				8415CFDE2776E30C008523A7 /* TodoViewController.xib */,
+				8417BFD0277F656C00B8EB36 /* ViewController */,
+				8417BFD1277F658400B8EB36 /* Cell */,
 			);
 			path = VIEWS;
 			sourceTree = "<group>";
@@ -59,8 +69,8 @@
 		8415CFDA277654DB008523A7 /* CONTROLERS */ = {
 			isa = PBXGroup;
 			children = (
-				8415CFDD2776E30C008523A7 /* TodoViewController.swift */,
-				8415CFD5277654B9008523A7 /* TodoTableViewCell.swift */,
+				8417BFD2277F659900B8EB36 /* ViewController */,
+				8417BFD3277F65AD00B8EB36 /* Cell */,
 			);
 			path = CONTROLERS;
 			sourceTree = "<group>";
@@ -86,9 +96,46 @@
 		8417BF9C277EAB5900B8EB36 /* MODEL */ = {
 			isa = PBXGroup;
 			children = (
+				8417BFD4277F701F00B8EB36 /* Category Brain.swift */,
 				8417BF9A277E99B700B8EB36 /* ToDo Brain.swift */,
 			);
 			path = MODEL;
+			sourceTree = "<group>";
+		};
+		8417BFD0277F656C00B8EB36 /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				8417BFC9277F650300B8EB36 /* CategoryViewController.xib */,
+				8415CFDE2776E30C008523A7 /* TodoViewController.xib */,
+			);
+			path = ViewController;
+			sourceTree = "<group>";
+		};
+		8417BFD1277F658400B8EB36 /* Cell */ = {
+			isa = PBXGroup;
+			children = (
+				8415CFD6277654B9008523A7 /* TodoTableViewCell.xib */,
+				8417BFCD277F654E00B8EB36 /* CategoryTableViewCell.xib */,
+			);
+			path = Cell;
+			sourceTree = "<group>";
+		};
+		8417BFD2277F659900B8EB36 /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				8417BFC8277F650300B8EB36 /* CategoryViewController.swift */,
+				8415CFDD2776E30C008523A7 /* TodoViewController.swift */,
+			);
+			path = ViewController;
+			sourceTree = "<group>";
+		};
+		8417BFD3277F65AD00B8EB36 /* Cell */ = {
+			isa = PBXGroup;
+			children = (
+				8417BFCC277F654E00B8EB36 /* CategoryTableViewCell.swift */,
+				8415CFD5277654B9008523A7 /* TodoTableViewCell.swift */,
+			);
+			path = Cell;
 			sourceTree = "<group>";
 		};
 		8467C7E927757BEA002985DD = {
@@ -183,6 +230,8 @@
 				8415CFE02776E30C008523A7 /* TodoViewController.xib in Resources */,
 				8415CFD8277654B9008523A7 /* TodoTableViewCell.xib in Resources */,
 				8467C80227757BEC002985DD /* LaunchScreen.storyboard in Resources */,
+				8417BFCF277F654E00B8EB36 /* CategoryTableViewCell.xib in Resources */,
+				8417BFCB277F650300B8EB36 /* CategoryViewController.xib in Resources */,
 				8467C7FF27757BEC002985DD /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -198,9 +247,12 @@
 				8415CFDF2776E30C008523A7 /* TodoViewController.swift in Sources */,
 				8415CFDC2776553D008523A7 /* Constants.swift in Sources */,
 				8415CFD7277654B9008523A7 /* TodoTableViewCell.swift in Sources */,
+				8417BFCA277F650300B8EB36 /* CategoryViewController.swift in Sources */,
 				8467C7F627757BEA002985DD /* AppDelegate.swift in Sources */,
 				8417BF9F277EAB9D00B8EB36 /* TodoDataModel.xcdatamodeld in Sources */,
 				8467C7F827757BEA002985DD /* SceneDelegate.swift in Sources */,
+				8417BFCE277F654E00B8EB36 /* CategoryTableViewCell.swift in Sources */,
+				8417BFD5277F701F00B8EB36 /* Category Brain.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

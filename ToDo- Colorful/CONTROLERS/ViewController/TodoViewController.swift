@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import CoreData
+import RealmSwift
 
 class TodoViewController: UIViewController {
     
@@ -15,33 +15,28 @@ class TodoViewController: UIViewController {
     @IBOutlet weak var searchBar: UISearchBar!
     
     //MARK: - SHARED CONSTANTS
-    let todoBrain = TodoBrain()
+    let category = Category()
     //Access Database
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-    
-    //MARK: - TODO BRAIN
+    let realm = try! Realm()
     //custom array da tableView
-    var itemArray = [Item]()
-    
+    var todoItems: Results<Item>?
     //Set categories
-    var selectCategory: Category? {
-        didSet{
-            if selectCategory != nil {
-                loadData()
-                self.tableView.reloadData()
-                
-            }
-        }
+    var selectCategory: Category?
+    
+    
+    //MARK: - VIEW WILL APPEAR
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        //Load TableView DATA
+        loadData()
+        //Call NC
+        configureNC()
     }
     
     //MARK: - VIEWDIDLOAD
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        
-        
-        //NC call
-        configureNC()
         
         //searchBar textField setup
         let textFieldSearchBar = searchBar.value(forKey: "searchField") as? UITextField
@@ -55,13 +50,11 @@ class TodoViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         
-        tableView.reloadData()
     }
-    
     //MARK: - CONFIGURACAO NC
     
     func configureNC() {
-        title = "Items"
+        title = "\(selectCategory!.name)"
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationController?.navigationBar.tintColor = .label
         settingRightBarButtom()
@@ -72,7 +65,6 @@ class TodoViewController: UIViewController {
             let rightBarButtom: () = navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addPressed))
             
             return rightBarButtom
-            
         }
     }
     
@@ -85,19 +77,20 @@ class TodoViewController: UIViewController {
         let alert = UIAlertController(title: "Add New ToDo Item", message: "", preferredStyle: .alert)
         //alert ADD ITEM buttom
         let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
-            
             //appending new item
-            let newItem = Item(context: self.context)
-            newItem.title = textField.text!
-            newItem.done = false
-            newItem.parentCategory = self.selectCategory
-            self.itemArray.append(newItem)
-            
-            //saving data
-            self.saveData()
+            if let currentCategory = self.selectCategory {
+                do {
+                    try self.realm.write {
+                        let newItem = Item()
+                        newItem.title = textField.text!
+                        currentCategory.items.append(newItem)
+                    }
+                } catch {
+                    print("Error Adding new Items \(error)")
+                }
+            }
             //reload tableView
             self.tableView.reloadData()
-            
         }
         //add textField inside alert box
         alert.addTextField { (alertTextField) in
@@ -108,8 +101,11 @@ class TodoViewController: UIViewController {
         //presenting alert box
         alert.addAction(action)
         present(alert, animated: true, completion: nil)
+        //Cancel Buttom
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        alert.addAction(cancelAction)
     }
-  
+    
     //MARK: - SWIPE TO DELETE FUNC
     private func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
         return true
@@ -118,84 +114,70 @@ class TodoViewController: UIViewController {
     internal func tableView(_ tableView: UITableView, commit editingStyle: TodoTableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         
         if (editingStyle == TodoTableViewCell.EditingStyle.delete) {
-            context.delete(itemArray[indexPath.row])
-            itemArray.remove(at: indexPath.row)
-            saveData()
-            tableView.reloadData()
-        }
-    }
-
-    //MARK: - SAVE DATA FUNC
-    func saveData() {
-        do {
-            try self.context.save()
-        } catch {
-            print("Error saving context: \(error)")
+            if let item = todoItems?[indexPath.row] {
+                do {
+                    try realm.write {
+                        realm.delete(item)
+                    }
+                } catch {
+                    print("error to delete item")
+                }
+            }
+            self.tableView.reloadData()
         }
     }
     
     //MARK: - LOAD DATA FUNC
-    func loadData(with request: NSFetchRequest<Item> = Item.fetchRequest()) {
-        
-        let predicate = NSPredicate(format: "parentCategory.name MATCHES %@", selectCategory!.name!)
-        request.predicate = predicate
-        
-        do {
-            itemArray = try context.fetch(request)
-        } catch {
-            print("Error fetching data from context: \(error)")
-        }
-        
-    }
     
+    func loadData() {
+        todoItems = selectCategory?.items.sorted(byKeyPath: "title", ascending: true)
+        tableView.reloadData()
+    }
 }//class
 
 //MARK: - TABLEVIEW DELEGATE - EXTENSION
+
 extension TodoViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return itemArray.count
+        return todoItems?.count ?? 1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: K.cellIdentifier1, for: indexPath) as! TodoTableViewCell
-        let item = itemArray[indexPath.row]
-        cell.cellText.text = item.title
         
-        //ternary operator - liga o bool da class Item ao checkmark
-        cell.accessoryType = item.done == true ? .checkmark : .none
+        if let item = todoItems?[indexPath.row] {
+            cell.cellText.text = todoItems?[indexPath.row].title
+            //ternary operator - liga o bool da class Item ao checkmark
+            cell.accessoryType = item.done == true ? .checkmark : .none
+        } else {
+            cell.cellText.text = "No items added Yet."
+        }
         return cell
     }
     
-    //MARK: - DID SELECT ROW AT:
+    //    //MARK: - DID SELECT ROW AT:
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        //deselect cell
-        tableView.deselectRow(at: indexPath, animated: true)
-        let item = itemArray[indexPath.row]
-        //checkmark statement (refatorado) liga e desliga do chackmark
-        item.done = !item.done
         
-        saveData()
+        if let item = todoItems?[indexPath.row] {
+            do {
+                try realm.write {
+                    item.done = !item.done
+                }
+            } catch {
+                print("error saving done status \(error)")
+            }
+        }
         self.tableView.reloadData()
-        
-        //checkmark antigo
-        //        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
-        //            tableView.cellForRow(at: indexPath)?.accessoryType = .none
-        //        } else { tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark}
-        
     }
 }//extension tableView delegate
 
 //MARK: - SEARCH BAR DELEGATE - EXTENSION
 extension TodoViewController: UISearchBarDelegate {
-   
+    
     //search buttom
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        let request: NSFetchRequest<Item> = Item.fetchRequest()
-    
-        request.predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
-        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
-        loadData(with: request)
         
+        todoItems = todoItems?.filter("title CONTAINS[cd] %@", searchBar.text!).sorted(byKeyPath: "title", ascending: true)
         self.tableView.reloadData()
     }
     
@@ -204,7 +186,6 @@ extension TodoViewController: UISearchBarDelegate {
         if searchBar.text?.count == 0 {
             loadData()
             self.tableView.reloadData()
-            
             DispatchQueue.main.async {
                 self.searchBar.resignFirstResponder()
             }

@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import CoreData
+import RealmSwift
 
 class CategoryViewController: UIViewController {
     
@@ -15,11 +15,11 @@ class CategoryViewController: UIViewController {
     @IBOutlet weak var searchBar: UISearchBar!
     
     //MARK: - SHARED CONSTANTS
-    let categoryBrain = CategoryBrain()
     let todoViewController = TodoViewController()
-    let todoBrain = TodoBrain()
     //Acces to Database
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    let realm = try! Realm()
+    var categories: Results<Category>?
+  
     
     //MARK: - VIEW DID LOAD
     override func viewDidLoad() {
@@ -41,16 +41,18 @@ class CategoryViewController: UIViewController {
         tableView.dataSource = self
         
         //load data
-        categoryBrain.loadData()
+        loadData()
         
-    }
-    
+    }    
     
     //MARK: - CONFIGURACAO NC
     func configureNC() {
+        
+        
         title = "ToDo List"
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationController?.navigationBar.tintColor = .label
+     
         settingRightBarButtom()
         //ITEMS:
         
@@ -64,6 +66,8 @@ class CategoryViewController: UIViewController {
     
     //MARK: - ADD NEW CATEGORY BUTTOM
     @objc func addPressed() {
+        
+        
         //variavel textfield transportada p socope da funcao configurada p/ ser = alertTextfield
         var textField = UITextField()
         //creating alert
@@ -72,12 +76,11 @@ class CategoryViewController: UIViewController {
         let action = UIAlertAction(title: "Add Category", style: .default) { (action) in
             
             //appending new item
-            let newCategory = Category(context: self.context)
+            let newCategory = Category()
             newCategory.name = textField.text!
-            self.categoryBrain.categoryArray.append(newCategory)
             
             //saving data
-            self.categoryBrain.saveData()
+            self.save(category: newCategory)
             //reload tableView
             self.tableView.reloadData()
             
@@ -91,20 +94,42 @@ class CategoryViewController: UIViewController {
         //presenting alert box
         alert.addAction(action)
         present(alert, animated: true, completion: nil)
+        
+        //Cancel Buttom
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        alert.addAction(cancelAction)
     }
     
+    
+    //MARK: - SAVE DATA FUNC
+    func save(category: Category) {
+        do {
+            try realm.write {
+                realm.add(category)
+            }
+        } catch {
+            print("Error fetching data from context: \(error)")
+        }
+        tableView.reloadData()
+    }
+    
+    //MARK: - LOAD DATA FUNC
+    func loadData() {
+        categories = realm.objects(Category.self)
+        tableView.reloadData()
+    }
 }//class
 
 //MARK: - TABLE VIEW DELEGATE - EXTENSION
 extension CategoryViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return categoryBrain.categoryArray.count
+        return categories?.count ?? 1
+        
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: K.cellIdentifier2, for: indexPath) as! CategoryTableViewCell
-        let category = categoryBrain.categoryArray[indexPath.row]
-        cell.cellText.text = category.name
+        cell.cellText.text = categories?[indexPath.row].name ?? "No Categories added yet."
         
         return cell
     }
@@ -116,27 +141,28 @@ extension CategoryViewController: UITableViewDelegate, UITableViewDataSource {
     
     internal func tableView(_ tableView: UITableView, commit editingStyle: CategoryTableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         
-        if (editingStyle == CategoryTableViewCell.EditingStyle.delete) {
-            context.delete(categoryBrain.categoryArray[indexPath.row])
-            categoryBrain.categoryArray.remove(at: indexPath.row)
-            categoryBrain.saveData()
-            tableView.reloadData()
+        if (editingStyle == TodoTableViewCell.EditingStyle.delete) {
+            if let category = categories?[indexPath.row] {
+                do {
+                    try realm.write {
+                        realm.delete(category)
+                    }
+                } catch {
+                    print("error to delete category")
+                }
+            }
+            self.tableView.reloadData()
         }
     }
     
     //MARK: - DID SELECT ROW AT:
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        navigationController?.pushViewController(todoViewController, animated: true)
-        
         if let indexPath = tableView.indexPathForSelectedRow {
-            todoViewController.selectCategory = categoryBrain.categoryArray[indexPath.row]
-           
+            navigationController?.pushViewController(todoViewController, animated: true)
+            todoViewController.selectCategory = categories?[indexPath.row]
+            tableView.deselectRow(at: indexPath, animated: true)
         }
-        
-      
     }
-    
-    
 }//tableView extension
 
 //MARK: - SEARCH BAR DELEGATE - EXTENSION
@@ -144,27 +170,18 @@ extension CategoryViewController: UISearchBarDelegate {
     
     //search buttom
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        let request: NSFetchRequest<Category> = Category.fetchRequest()
-        
-        request.predicate = NSPredicate(format: "name CONTAINS[cd] %@", searchBar.text!)
-        request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
-        categoryBrain.loadData(with: request)
-        
+        categories = categories?.filter("name CONTAINS[cd] %@", searchBar.text!).sorted(byKeyPath: "name", ascending: true)
         self.tableView.reloadData()
     }
     
     //searchBar text alteracao depois da busca
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         if searchBar.text?.count == 0 {
-            categoryBrain.loadData()
-            self.tableView.reloadData()
+            loadData()
             
             DispatchQueue.main.async {
                 self.searchBar.resignFirstResponder()
             }
         }
     }
-    
-    
-    
 }//extension searchbar delegate

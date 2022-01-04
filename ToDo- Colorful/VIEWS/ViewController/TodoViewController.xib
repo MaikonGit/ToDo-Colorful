@@ -22,13 +22,13 @@
             <subviews>
                 <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" estimatedSectionHeaderHeight="-1" sectionFooterHeight="28" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="Jz7-yA-s3v">
                     <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                    <color key="backgroundColor" systemColor="systemBlueColor"/>
-                    <color key="separatorColor" systemColor="systemBlueColor"/>
+                    <color key="backgroundColor" red="0.91976243257522583" green="0.65292588288382525" blue="0.5718395977187859" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                    <color key="separatorColor" red="0.91976243260000001" green="0.65292588289999998" blue="0.57183959770000004" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                     <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                     <searchBar key="tableHeaderView" contentMode="redraw" placeholder="Search" id="CfQ-Jx-3kc">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                        <color key="barTintColor" systemColor="systemBlueColor"/>
+                        <color key="barTintColor" red="0.91976243260000001" green="0.65292588289999998" blue="0.57183959770000004" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                         <textInputTraits key="textInputTraits" enablesReturnKeyAutomatically="YES"/>
                         <connections>
                             <outlet property="delegate" destination="-1" id="fZy-Yj-VfY"/>
@@ -50,9 +50,6 @@
     <resources>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-        <systemColor name="systemBlueColor">
-            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>
